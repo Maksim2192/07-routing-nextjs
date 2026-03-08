@@ -1,20 +1,30 @@
-import Footer from "../components/Footer/Footer";
-import Header from "../components/Header/Header";
-import TanStackProvider from "../components/TanStackProvider/TanStackProvider";
+import "./globals.css";
+import type { Metadata } from "next";
+import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
+import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
 
-export default function RootLayout({
-  children,
-}: {
+export const metadata: Metadata = {
+  title: "07-routing-nextjs",
+};
+
+type Props = {
   children: React.ReactNode;
-}) {
+  modal: React.ReactNode;
+};
+
+export default function NotesLayout({ children, modal }: Props) {
   return (
     <html lang="en">
       <body>
         <TanStackProvider>
-        <Header/>
-        {children}
-        <Footer />
-          </TanStackProvider>
+          <Header />
+          <main>
+            {children}
+            {modal}
+          </main>
+          <Footer />
+        </TanStackProvider>
       </body>
     </html>
   );

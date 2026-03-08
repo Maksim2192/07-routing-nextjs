@@ -1,30 +1,45 @@
-import { getNotes } from '@/lib/api';
-import NoteList from '@/components/NoteList/NoteList';
-import css from '@/components/NoteList/NoteList.module.css';
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
+import { fetchNotes } from "@/lib/api";
+import { TAGS, Tags } from "@/types/note";
+import NotesClient from "./Notes.client";
 
-type Props = {
-    params: Promise<{ slug: string[] }>;
-};
+interface NotesSlugProps {
+  params: Promise<{ slug: string[] }>;
+}
 
-const NotesByCategory = async ({ params }: Props) => {
-    const { slug } = await params;
+export default async function NotesSlugPage({ params }: NotesSlugProps) {
+  const { slug } = await params;
+  const queryClient = new QueryClient();
 
-    const category = slug?.[0] === 'all' ? undefined : slug?.[0];
+  let tag: Tags | undefined = undefined;
+  const currentSlug = slug[0];
 
-    const response = await getNotes(category);
+  if (currentSlug) {
+    if (TAGS.includes(currentSlug as Tags)) {
+      tag = currentSlug as Tags;
+    } else if (currentSlug === "All") {
+      tag = undefined;
+    }
+  }
 
-    console.log('Server log:', response);
+  await queryClient.prefetchQuery({
+    queryKey: ["notes", 1, "", tag],
+    queryFn: () =>
+      fetchNotes({
+        page: 1,
+        query: "",
+        perPage: 12,
+        tag,
+      }),
+  });
 
-    return (
-        <div>
-            <h1 className={css.title}>Notes List</h1>
-            {response?.notes?.length > 0 ? (
-                <NoteList notes={response.notes} />
-            ) : (
-                <p>No notes found in this category.</p>
-            )}
-        </div>
-    );
-};
-
-export default NotesByCategory;
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <NotesClient tag={tag} />
+    </HydrationBoundary>
+  );
+}

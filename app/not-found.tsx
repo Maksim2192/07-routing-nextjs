@@ -1,5 +1,12 @@
-import Redirect404 from "../components/Redirect404/Redirect404";
+import css from "./error.module.css";
 
 export default function NotFound() {
-    return <Redirect404 />;
+  return (
+    <div>
+      <h1 className={css.error}>404 - Page not found</h1>
+      <p className={css.description}>
+        Sorry, the page you are looking for does not exist.
+      </p>
+    </div>
+  );
 }
