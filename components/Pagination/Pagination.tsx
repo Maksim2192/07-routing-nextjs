@@ -3,8 +3,8 @@ import ReactPaginate from "react-paginate";
 import css from "./Pagination.module.css";
 
 interface PaginationProps {
-  currentPage: number;
   totalPages: number;
+  currentPage: number;
   onPageChange: (page: number) => void;
 }
 

@@ -5,7 +5,7 @@ import { useState, useCallback } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 import SearchBox from "@/components/SearchBox/SearchBox";
-import NoteList from "@/components/NoteList/NoteList";
+import {NoteList} from "@/components/NoteList/NoteList";
 import Pagination from "@/components/Pagination/Pagination";
 import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
@@ -23,28 +23,22 @@ export default function NotesClient({ tag }: NotesClientProps) {
   const [debouncedQuery] = useDebounce(localSearchQuery, 500);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  const { data, error, isLoading } = useQuery<FetchNotesResponse, Error>({
-    queryKey: ["notes", currentPage, debouncedQuery, tag],
-    queryFn: () =>
-      fetchNotes({
-        page: currentPage,
-        query: debouncedQuery,
-        perPage: 12,
-        tag,
-      }),
-    placeholderData: keepPreviousData,
-    refetchOnWindowFocus: false,
-    staleTime: 5 * 60 * 1000,
-  });
-
+    const { data, error, isLoading } = useQuery<FetchNotesResponse, Error>({
+  queryKey: ["notes", currentPage, debouncedQuery, tag],
+  queryFn: () => fetchNotes(debouncedQuery, currentPage, tag),
+  placeholderData: keepPreviousData,
+  refetchOnWindowFocus: false,
+  staleTime: 5 * 60 * 1000,
+});
+    
   if (error) {
     throw error;
   }
 
-  const handlePageChange = useCallback((selectedItem: { selected: number }) => {
-    setCurrentPage(selectedItem.selected + 1);
-  }, []);
-
+    const handlePageChange = useCallback((page: number) => {
+  setCurrentPage(page);
+}, []);
+    
   const handleSearchChange = useCallback(
     (value: string) => {
       const lowerCaseValue = value.toLowerCase();
@@ -66,7 +60,7 @@ export default function NotesClient({ tag }: NotesClientProps) {
         <SearchBox value={localSearchQuery} onChange={handleSearchChange} />
         {data && data.totalPages > 1 && (
           <Pagination
-            pageCount={data.totalPages}
+            totalPages={data.totalPages}
             onPageChange={handlePageChange}
             currentPage={currentPage - 1}
           />

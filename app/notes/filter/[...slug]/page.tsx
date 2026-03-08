@@ -26,17 +26,11 @@ export default async function NotesSlugPage({ params }: NotesSlugProps) {
     }
   }
 
-  await queryClient.prefetchQuery({
-    queryKey: ["notes", 1, "", tag],
-    queryFn: () =>
-      fetchNotes({
-        page: 1,
-        query: "",
-        perPage: 12,
-        tag,
-      }),
-  });
-
+    await queryClient.prefetchQuery({
+  queryKey: ["notes", 1, "", tag],
+  queryFn: () => fetchNotes("", 1, tag),
+});
+    
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <NotesClient tag={tag} />
