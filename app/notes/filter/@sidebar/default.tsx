@@ -1,4 +1,4 @@
-@sidebar
+import sideBar form "../@sidebar"
 
 import css from "./SidebarNotes.module.css";
 import Link from "next/link";
