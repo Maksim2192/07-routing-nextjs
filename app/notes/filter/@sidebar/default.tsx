@@ -1,5 +1,3 @@
-import sideBar form "../@sidebar"
-
 import css from "./SidebarNotes.module.css";
 import Link from "next/link";
 import { TAGS, Tags } from "@/types/note";

@@ -11,7 +11,8 @@ export interface FetchNotesResponse {
 
 export const fetchNotes = async (
   search: string,
-  page: number
+  page: number,
+  tag?: string
 ): Promise<FetchNotesResponse> => {
   const res = await axios.get<FetchNotesResponse>(BASE_URL, {
     headers: {
@@ -20,6 +21,7 @@ export const fetchNotes = async (
     params: {
       search: search || undefined,
       page,
+      tag: tag || undefined,
     },
   });
 
